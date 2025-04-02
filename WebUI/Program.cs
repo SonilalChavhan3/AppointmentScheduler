@@ -1,7 +1,20 @@
+using Application.Services.Interfaces;
+using Application.Services;
+using Infrastructure.Persistence;
+using Infrastructure.Repository.Interfaces;
+using Infrastructure.Repository;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+
 
 var app = builder.Build();
 
@@ -22,7 +35,8 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
+    // pattern: "{controller=Home}/{action=Index}/{id?}")
+    pattern: "{controller=Appointment}/{action=Index}/{id?}")
     .WithStaticAssets();
 
 
